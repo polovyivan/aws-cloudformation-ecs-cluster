@@ -1,0 +1,61 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  This template defines:
+  - IAM Role for instances that will be included in ECS cluster
+
+# Parameters:
+#   EnvironmentName:
+#     Description: An environment name that will be prefixed to resource names
+#     Type: String
+#     Default: dev
+
+Resources:
+  # Role for the EC2 hosts. This allows the ECS agent on the EC2 hosts
+  # to communciate with the ECS control plane, as well as download the docker
+  # images from ECR to run on your host.
+  ECSClusterIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ec2.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: /
+      ManagedPolicyArns:
+        # See reference: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonEC2ContainerServiceforEC2Role
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+        # # This managed policy allows us to connect to the instance using SSM
+        # - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        
+
+  # This is a role which is used within Fargate to allow the Fargate agent
+  # to download images, and upload logs.
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ecs-tasks.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Path: /
+      # This role enables all features of ECS. See reference:
+      # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AmazonECSTaskExecutionRolePolicy
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+Outputs:
+  ECSClusterIAMRole:
+    Description: A reference to the ECS IAM Role
+    Value: !Ref ECSClusterIAMRole
+    Export:
+      Name: ECSClusterIAMRole
+  ECSTaskExecutionRole:
+    Description: A reference to the ECS Service Auto Scaling IAM Role
+    Value: !Ref ECSTaskExecutionRole
+    Export:
+      Name: ECSTaskExecutionRole

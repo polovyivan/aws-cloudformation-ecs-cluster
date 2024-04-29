@@ -1,0 +1,48 @@
+Description: >
+  This template contains following security groups:
+   - ECS Cluster hosts
+   - Load Balancer
+  
+Parameters:
+  EnvironmentName:
+    Description: The name of the environemt. It will be prefixed to a resource names
+    Type: String
+    Default: dev
+
+Resources:
+  ECSClusterSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue ECSClusterVPC
+      GroupDescription: To controll access to the ECS hosts and the tasks/containers
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref ECSLoadBalancerSecurityGroup
+          IpProtocol: -1
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-ECS-Cluster-Hosts-SG
+
+  ECSLoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !ImportValue ECSClusterVPC
+      GroupDescription: To controll access to the load balancer that sits in front of ECS cluster
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-LoadBalancers-SG
+
+Outputs:
+  ECSClusterSecurityGroup:
+    Description: A reference to the security group for ECS hosts
+    Value: !Ref ECSClusterSecurityGroup
+    Export: 
+      Name: ECSClusterSecurityGroup
+
+  ECSLoadBalancerSecurityGroup:
+    Description: A reference to the security group for load balancers
+    Value: !Ref ECSLoadBalancerSecurityGroup
+    Export: 
+      Name: ECSLoadBalancerSecurityGroup
