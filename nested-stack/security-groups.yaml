@@ -8,12 +8,15 @@ Parameters:
     Description: The name of the environemt. It will be prefixed to a resource names
     Type: String
     Default: dev
+  ECSClusterVPC: 
+    Description: The VPC where SG is created
+    Type: String
 
 Resources:
   ECSClusterSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      VpcId: !ImportValue ECSClusterVPC
+      VpcId:  !Ref ECSClusterVPC
       GroupDescription: To controll access to the ECS hosts and the tasks/containers
       SecurityGroupIngress:
         - SourceSecurityGroupId: !Ref ECSLoadBalancerSecurityGroup
@@ -25,7 +28,7 @@ Resources:
   ECSLoadBalancerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      VpcId: !ImportValue ECSClusterVPC
+      VpcId: !Ref ECSClusterVPC
       GroupDescription: To controll access to the load balancer that sits in front of ECS cluster
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
@@ -38,11 +41,11 @@ Outputs:
   ECSClusterSecurityGroup:
     Description: A reference to the security group for ECS hosts
     Value: !Ref ECSClusterSecurityGroup
-    Export: 
-      Name: ECSClusterSecurityGroup
+    # Export: 
+    #   Name: ECSClusterSecurityGroup
 
   ECSLoadBalancerSecurityGroup:
     Description: A reference to the security group for load balancers
     Value: !Ref ECSLoadBalancerSecurityGroup
-    Export: 
-      Name: ECSLoadBalancerSecurityGroup
+    # Export: 
+    #   Name: ECSLoadBalancerSecurityGroup

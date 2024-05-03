@@ -58,10 +58,10 @@ Outputs:
   ECSClusterIAMRole:
     Description: A reference to the ECS IAM Role
     Value: !Ref ECSClusterIAMRole
-    Export:
-      Name: ECSClusterIAMRole
+    # Export:
+    #   Name: ECSClusterIAMRole
   ECSTaskExecutionRole:
     Description: A reference to the ECS Service Auto Scaling IAM Role
     Value: !Ref ECSTaskExecutionRole
-    Export:
-      Name: ECSTaskExecutionRole
+    # Export:
+    #   Name: ECSTaskExecutionRole

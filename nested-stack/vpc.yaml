@@ -244,11 +244,11 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGatewayC
 Outputs:
-  VPC:
+  ClusterVPC:
     Description: A reference to the created VPC
     Value: !Ref VPC
-    Export: 
-      Name: ECSClusterVPC
+    # Export: 
+    #   Name: ECSClusterVPC
   PublicSubnets:
     Description: A list of the public subnets
     Value: !Join
@@ -256,8 +256,8 @@ Outputs:
       - - !Ref PublicSubnetA
         - !Ref PublicSubnetB
         - !Ref PublicSubnetC
-    Export: 
-      Name: ECSClusterVPCPublicSubnets  
+    # Export: 
+    #   Name: ECSClusterVPCPublicSubnets  
   PrivateSubnets:
     Description: A list of the private subnets
     Value: !Join
@@ -265,8 +265,8 @@ Outputs:
       - - !Ref PrivateSubnetA
         - !Ref PrivateSubnetB
         - !Ref PrivateSubnetC
-    Export: 
-      Name: ECSClusterVPCPrivateSubnets
+    # Export: 
+    #   Name: ECSClusterVPCPrivateSubnets
   PrivateSubnetA:
     Description: A reference to the private subnet in the 1st Availability Zone
     Value: !Ref PrivateSubnetA

@@ -8,30 +8,22 @@ Parameters:
   EnvironmentName:
     Description: An environment name that will be prefixed to resource names
     Type: String
-    Default: dev
   InstanceType:
     Type: String
-    Default: t2.small
-    Description: Class of EC2 instance used to host containers.
-    AllowedValues: 
-      - t2.micro
-      - t2.small
   DesiredCapacity:
     Type: Number
-    Default: '1'
-    Description: Number of EC2 instances to launch in your ECS cluster.
   MinSize:
     Type: Number
-    Default: '1'
-    Description: Minimum number of EC2 instances that can be launched in your ECS cluster.
   MaxSize:
     Type: Number
-    Default: '1'
-    Description: Maximum number of EC2 instances that can be launched in your ECS cluster.
   ECSAMI:
-    Description: The Amazon Machine Image ID used for the cluster
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ecs/optimized-ami/amazon-linux-2023/recommended/image_id
+    Type: String
+  ECSClusterVPCPrivateSubnets:
+    Type: String
+  ECSClusterSecurityGroup:
+    Type: String  
+  ECSClusterIAMRole:
+    Type: String  
 
 Resources:
   # ECS Resources
@@ -51,11 +43,11 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     DeletionPolicy: Delete
     Properties:
-      VPCZoneIdentifier: !Split [",", !ImportValue  ECSClusterVPCPrivateSubnets]
+      VPCZoneIdentifier: !Split [",", !Ref ECSClusterVPCPrivateSubnets]
       LaunchTemplate:
         LaunchTemplateId: !Ref ContainerInstances
         Version: !GetAtt ContainerInstances.LatestVersionNumber
-      MinSize: !Ref MimSize
+      MinSize: !Ref MinSize
       MaxSize: !Ref MaxSize
       DesiredCapacity: !Ref DesiredCapacity
       Tags:
@@ -74,7 +66,7 @@ Resources:
         IamInstanceProfile:
           Name: !Ref EC2InstanceProfile
         SecurityGroupIds:
-          - !ImportValue ECSClusterSecurityGroup
+          - !Ref ECSClusterSecurityGroup
         UserData:
           # This injected configuration file is how the EC2 instance
           # knows which ECS cluster on your AWS account it should be joining
@@ -92,7 +84,7 @@ Resources:
     Properties:
       Path: /
       Roles:
-        - !ImportValue  ECSClusterIAMRole
+        - !Ref ECSClusterIAMRole
 
   # Create an ECS capacity provider to attach the ASG to the ECS cluster
   # so that it autoscales as we launch more containers
