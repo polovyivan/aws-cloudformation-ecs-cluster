@@ -15,7 +15,7 @@ Resources:
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: !Ref EnvironmentName
+      Name: !Sub ${EnvironmentName}-LB
       Subnets: !Split [",", !ImportValue  ECSClusterVPCPublicSubnets]
       SecurityGroups:
         - !ImportValue ECSLoadBalancerSecurityGroup
