@@ -1,9 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  EC2 ECS cluster that starts out empty, with no EC2 instances yet.
-  An ECS capacity provider automatically launches more EC2 instances
-  as required on the fly when you request ECS to launch services or
-  standalone tasks.
+  This template defines:
+  - An empty ECS CLuster
+  - Capacity provider
+  - Autoscailing Group
+  - Instance profile
+  - Launch template
 Parameters:
   EnvironmentName:
     Description: An environment name that will be prefixed to resource names
@@ -62,7 +64,6 @@ Resources:
       LaunchTemplateData:
         ImageId: !Ref ECSAMI
         InstanceType: !Ref InstanceType
-        KeyName: "Ivan"
         IamInstanceProfile:
           Name: !Ref EC2InstanceProfile
         SecurityGroupIds:

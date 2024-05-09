@@ -1,7 +1,5 @@
 Description: >
-  This template contains following security groups:
-   - ECS Cluster hosts
-   - Load Balancer
+  A parent stack
   
 Parameters:
   EnvironmentName:
@@ -48,7 +46,7 @@ Parameters:
   ECSAMI:
     Description: The Amazon Machine Image ID used for the cluster
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ecs/optimized-ami/amazon-linux-2023/recommended/image_id
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
 
 Resources:
   VPC:
@@ -108,18 +106,3 @@ Resources:
         ECSClusterVPCPrivateSubnets: !GetAtt VPC.Outputs.PrivateSubnets
         ECSClusterSecurityGroup: !GetAtt SecurityGroups.Outputs.ECSClusterSecurityGroup
         ECSClusterIAMRole: !GetAtt IAMRoles.Outputs.ECSClusterIAMRole
-
-
-  
-# Outputs:
-#   ECSClusterSecurityGroup:
-#     Description: A reference to the security group for ECS hosts
-#     Value: !Ref ECSClusterSecurityGroup
-#     Export: 
-#       Name: ECSClusterSecurityGroup
-
-#   ECSLoadBalancerSecurityGroup:
-#     Description: A reference to the security group for load balancers
-#     Value: !Ref ECSLoadBalancerSecurityGroup
-#     Export: 
-#       Name: ECSLoadBalancerSecurityGroup

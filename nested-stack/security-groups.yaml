@@ -41,11 +41,7 @@ Outputs:
   ECSClusterSecurityGroup:
     Description: A reference to the security group for ECS hosts
     Value: !Ref ECSClusterSecurityGroup
-    # Export: 
-    #   Name: ECSClusterSecurityGroup
 
   ECSLoadBalancerSecurityGroup:
     Description: A reference to the security group for load balancers
     Value: !Ref ECSLoadBalancerSecurityGroup
-    # Export: 
-    #   Name: ECSLoadBalancerSecurityGroup
